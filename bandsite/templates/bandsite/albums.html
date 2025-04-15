@@ -1,0 +1,22 @@
+{% extends 'bandsite/base_generic.html' %}
+{% block content %}
+  <h2 class="mb-4">Albumele Trupei</h2>
+  <div class="row">
+    {% for album in albums %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          {% if album.cover %}
+            <img src="{{ album.cover.url }}" class="card-img-top" alt="{{ album.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ album.title }}</h5>
+            <p class="card-text"><strong>Lansat:</strong> {{ album.release_date }}</p>
+            <p class="card-text">{{ album.description }}</p>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>Nu există albume disponibile momentan.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

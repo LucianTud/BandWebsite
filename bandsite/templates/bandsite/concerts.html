@@ -1,0 +1,15 @@
+{% extends 'bandsite/base_generic.html' %}
+{% block content %}
+  <h2 class="mb-4">Concertele Viitoare</h2>
+  <div class="list-group">
+    {% for concert in concerts %}
+      <div class="list-group-item">
+        <h5>{{ concert.location }}</h5>
+        <p><strong>Data:</strong> {{ concert.date|date:"d M Y H:i" }}</p>
+        <p>{{ concert.description }}</p>
+      </div>
+    {% empty %}
+      <p>Momentan nu sunt concerte programate.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

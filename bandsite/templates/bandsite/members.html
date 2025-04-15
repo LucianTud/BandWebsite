@@ -1,0 +1,20 @@
+{% extends 'bandsite/base_generic.html' %}
+{% block content %}
+  <h2>Membrii Trupei</h2>
+  <div class="row">
+    {% for member in members %}
+      <div class="col-md-4">
+        <div class="card mb-3">
+          {% if member.photo %}
+            <img src="{{ member.photo.url }}" class="card-img-top" alt="{{ member.name }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ member.name }}</h5>
+            <p class="card-text"><strong>Rol:</strong> {{ member.role }}</p>
+            <p class="card-text">{{ member.bio }}</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
