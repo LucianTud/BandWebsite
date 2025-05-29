@@ -1,4 +1,20 @@
 from django.db import models
+from django.utils import timezone
+
+
+
+from django.db import models
+
+class Review(models.Model):
+    name = models.CharField(max_length=100)
+    rating = models.IntegerField(choices=[(1, '⭐️'), (2, '⭐️⭐️'), (3, '⭐️⭐️⭐️'), (4, '⭐️⭐️⭐️⭐️'), (5, '⭐️⭐️⭐️⭐️⭐️')])
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)  # Folosește doar auto_now_add
+
+    def __str__(self):
+        return f"{self.name} - {self.rating}/5"
+
+
 
 class Member(models.Model):
     name = models.CharField(max_length=100)
@@ -26,10 +42,4 @@ class Concert(models.Model):
     def __str__(self):
         return f"{self.location} - {self.date.strftime('%d %B %Y')}"
 
-class Review(models.Model):
-    name = models.CharField(max_length=100)
-    rating = models.IntegerField()
-    comment = models.TextField()
 
-    def __str__(self):
-        return f"{self.name} - {self.rating}/5"

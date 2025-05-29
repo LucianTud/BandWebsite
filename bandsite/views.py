@@ -7,11 +7,62 @@ from .models import Member, Album, Concert
 from .forms import ContactForm
 from django.core.mail import send_mail
 from django.http import HttpResponse
-# rom .models import Review
+from .models import Review
+from .forms import ReviewForm
+from django.http import JsonResponse
+from django.core.paginator import Paginator
+
+
+def submit_review(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+
+        # Verificăm dacă câmpurile nu sunt goale
+        if name and rating and comment:
+            # Salvăm recenzia în baza de date
+            Review.objects.create(name=name, rating=rating, comment=comment)
+
+            # Mesaj de succes
+            messages.success(request, 'Recenzia ta a fost adăugată cu succes!')
+            return redirect('home')  # Redirecționăm utilizatorul către pagina de Home
+        else:
+            messages.error(request, 'Te rugăm să completezi toate câmpurile!')
+            return redirect('home')
+    return HttpResponse("Invalid request method", status=400)
+
+def load_more_reviews(request):
+    reviews = Review.objects.all().order_by('-created_at')
+    paginator = Paginator(reviews, 4)  # 4 recenzii pe pagină
+    page = request.GET.get('page', 1)  # Dacă nu se specifică pagina, începe de la 1
+    reviews_page = paginator.get_page(page)
+
+    reviews_data = []
+    for review in reviews_page:
+        reviews_data.append({
+            'name': review.name,
+            'comment': review.comment,
+            'rating': review.rating,
+            'created_at': review.created_at.strftime('%d-%m-%Y'),
+        })
+
+    return JsonResponse({'reviews': reviews_data})
+
+
+
 
 
 def home(request):
-    return render(request, 'bandsite/home.html')
+    # Obține primele 4 recenzii ordonate după data de creare (descrescător)
+    reviews = Review.objects.all().order_by('-created_at')[:4]  # Primele 4 recenzii
+    all_reviews_count = Review.objects.count()  # Contorul total al recenziilor
+    return render(request, 'bandsite/home.html', {'reviews': reviews, 'all_reviews_count': all_reviews_count})
+
+
+
+
+
 
 def about(request):
     return render(request, 'bandsite/about.html')
@@ -73,17 +124,6 @@ def contact_view(request):
 
   # Presupunând că ai un model Review
 
-def submit_review(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        rating = request.POST.get('rating')
-        comment = request.POST.get('comment')
 
-        # Salvăm recenzia în baza de date
-        Review.objects.create(name=name, rating=rating, comment=comment)
 
-        # Redirecționăm utilizatorul înapoi la pagina de Home sau la o altă pagină
-        return redirect('home')
-
-    return HttpResponse("Invalid request method", status=400)
 
