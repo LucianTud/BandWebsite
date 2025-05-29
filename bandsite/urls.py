@@ -15,4 +15,6 @@ urlpatterns = [
     path('concerts/', views.concerts, name='concerts'),  # Concerts page
     path('contact/', views.contact_view, name='contact'),  # Contact page
     path('submit-review/', views.submit_review, name='submit_review'),
+    path('submit-review/', views.submit_review, name='submit_review'),
+    path('load_more_reviews/', views.load_more_reviews, name='load_more_reviews'),
 ]
