@@ -1,0 +1,64 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Confirmă ștergerea media</h1>
+  <div class="media-item" id="media-item-{{ media_item.id }}">
+    <img src="{{ media_item.image.url }}" alt="{{ media_item.title }}">
+    <p>{{ media_item.title }}</p>
+  </div>
+
+  <div class="confirmation-buttons">
+    <button id="cancelButton">Anulează</button>
+    <button id="confirmButton">Da, șterge</button>
+  </div>
+
+  <script>
+    const cancelButton = document.getElementById('cancelButton');
+    const confirmButton = document.getElementById('confirmButton');
+    const mediaItem = document.getElementById('media-item-{{ media_item.id }}');
+
+    // Anularea ștergerii
+    cancelButton.addEventListener('click', () => {
+        mediaItem.classList.remove('selected-for-deletion');  // Resetează stilul
+        window.location.href = '{% url "gallery" %}';  // Redirectează la galerie (sau pagina dorită)
+    });
+
+    // Confirmarea ștergerii
+    confirmButton.addEventListener('click', () => {
+        fetch('{% url "delete_media" media_item.id %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Actualizează UI-ul pentru a reflecta ștergerea
+                mediaItem.remove();
+                alert("Media a fost ștearsă!");
+                window.location.href = '{% url "gallery" %}';  // Redirecționează la galerie
+            }
+        })
+        .catch(error => {
+            console.error('Eroare:', error);
+            alert("A apărut o problemă la ștergere.");
+        });
+    });
+</script>
+
+
+  <style>
+    /* Stiluri pentru confirmarea ștergerii */
+    .media-item.selected-for-deletion {
+        opacity: 0.5;
+        filter: grayscale(100%);
+    }
+
+    .confirmation-buttons button {
+        margin: 10px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+  </style>
+{% endblock %}
