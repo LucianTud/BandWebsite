@@ -1,6 +1,102 @@
 {% extends 'bandsite/base_generic.html' %}
+{% load static %}
 
 {% block content %}
-  <h1>Gallery</h1>
-  <p>This is the gallery page. Check out our photos and videos!</p>
+<div class="container mt-5 text-white">
+    <h1>Galerie Media</h1>
+
+    {% if user.is_staff %}
+        <a href="{% url 'add_media' %}" class="btn btn-primary mb-4">Adaugă Media</a>
+    {% endif %}
+
+    <div class="row media-gallery">
+        {% for media in media_items %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center bg-dark text-white">
+                    {% if media.media_type == 'image' and media.image %}
+                        <img src="{{ media.image.url }}" class="card-img-top" alt="{{ media.title }}"
+                             data-bs-toggle="modal" data-bs-target="#imageModal"
+                             data-bs-image="{{ media.image.url }}" data-bs-title="{{ media.title }}">
+                    {% elif media.media_type == 'video' and media.video_url %}
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/{{ media.video_url|cut:'https://www.youtube.com/watch?v=' }}"
+                                    title="{{ media.title }}" allowfullscreen></iframe>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ media.title }}</h5>
+                        <p class="card-text">{{ media.category }}</p>
+                        {% if user.is_staff %}
+                            <button class="btn btn-danger delete-btn" data-id="{{ media.id }}"
+                                    data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+                                Șterge
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>Nu există media încă.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal pentru imagine -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imageModalLabel"></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Închide"></button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImage" src="" class="img-fluid" alt="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Închide</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmare Ștergere -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmModalLabel">Confirmare ștergere</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Închide"></button>
+      </div>
+      <div class="modal-body">
+        Sigur doriți să ștergeți această postare?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+        <form id="confirmDeleteForm" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Da, șterge</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var imageModal = document.getElementById('imageModal');
+  var modalImage = document.getElementById('modalImage');
+  var modalTitle = document.getElementById('imageModalLabel');
+
+  imageModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var imageUrl = button.getAttribute('data-bs-image');
+    var title = button.getAttribute('data-bs-title');
+
+    modalImage.src = imageUrl;
+    modalTitle.textContent = title;
+  });
+</script>
+
+<script src="{% static 'js/media_actions.js' %}"></script>
 {% endblock %}

@@ -58,7 +58,7 @@ header h1 {
     font-size: 28px;
 }
 
-/* Quick Links Section */
+/* Quick Links Section (Updated for Contact Page) */
 .quick-links {
     background-color: #f8f9fa;
     padding: 80px 0;
@@ -115,6 +115,60 @@ header h1 {
         flex-direction: column;
         align-items: center;
     }
+}
+
+/* Contact Section */
+.contact-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+    margin-top: 50px;
+    padding: 30px;
+    background-color: #333;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.contact-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.contact-card i {
+    transition: transform 0.3s ease;
+}
+
+.contact-card li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.contact-card li a:hover {
+    color: #ff6347;
+    text-decoration: underline;
+}
+
+.contact-card i:hover {
+    transform: scale(1.1);
+}
+
+.contact-card .card-title {
+    font-size: 2rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ff6347;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.contact-card li {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.text-center {
+    text-align: center;
 }
 
 /* Review Section */
@@ -218,4 +272,46 @@ footer {
         font-size: 16px;
         padding: 10px 20px;
     }
+}
+
+/* Stil pentru imaginea selectată pentru ștergere */
+.media-item.selected-for-deletion {
+    opacity: 0.5; /* Face imaginea să fie mai transparentă */
+    filter: grayscale(100%); /* Oferă un efect de "grayscale" pentru a o face să pară ștearsă */
+}
+
+/* Stiluri pentru butoanele de confirmare și anulare */
+.confirmation-buttons button {
+    margin: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #ff6347;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+/* Schimbarea culorii butonului la hover */
+.confirmation-buttons button:hover {
+    background-color: #e5533f;
+    transform: scale(1.05);
+}
+
+/* Anularea stilului aplicat imaginii atunci când utilizatorul apasă "Anulează" */
+.cancel-button {
+    background-color: #777; /* O culoare neutră pentru anulare */
+}
+
+.cancel-button:hover {
+    background-color: #999;
+}
+
+/* Anularea efectului de "grayscale" când se apasă pe anulare */
+.cancelled .media-item {
+    opacity: 1;  /* Imaginea revine la normal */
+    filter: none;  /* Se elimină efectul de grayscale */
 }

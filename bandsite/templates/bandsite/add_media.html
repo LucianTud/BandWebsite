@@ -1,0 +1,52 @@
+{% extends 'bandsite/base_generic.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Adaugă Media</h1>
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li class="alert alert-success">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Formularul pentru titlu -->
+    <div class="mb-3">
+        {{ form.title.label_tag }}
+        {{ form.title }}
+    </div>
+
+    <!-- Formularul pentru tipul media (Imagine sau Video) -->
+    <div class="mb-3">
+        {{ form.media_type.label_tag }}
+        {{ form.media_type }}
+    </div>
+
+    <!-- Formularul pentru imagine (doar dacă media_type este 'image') -->
+    <div class="mb-3">
+        {{ form.image.label_tag }}
+        {{ form.image }}
+    </div>
+
+    <!-- Formularul pentru URL video (doar dacă media_type este 'video') -->
+    <div class="mb-3">
+        {{ form.video_url.label_tag }}
+        {{ form.video_url }}
+    </div>
+
+    <!-- Formularul pentru categorie -->
+    <div class="mb-3">
+        {{ form.category.label_tag }}
+        {{ form.category }}
+    </div>
+
+    <!-- Butonul de trimitere a formularului -->
+    <button type="submit" class="btn btn-primary">Adaugă Media</button>
+</form>
+
+{% endblock %}
