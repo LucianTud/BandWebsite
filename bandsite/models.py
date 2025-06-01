@@ -6,6 +6,19 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+class CalendarDate(models.Model):
+    date = models.DateField(unique=True)
+    is_unavailable = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.date} - {'Indisponibilă' if self.is_unavailable else 'Disponibilă'}"
+
+class UnavailableDate(models.Model):
+    date = models.DateField(unique=True)
+
+    def __str__(self):
+        return self.date.strftime('%d %B %Y')
+
 class MediaItem(models.Model):
     IMAGE = 'image'
     VIDEO = 'video'
