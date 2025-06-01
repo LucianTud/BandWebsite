@@ -1,35 +1,61 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     // Inițializare dropdown-uri Bootstrap
     document.querySelectorAll('.dropdown-toggle').forEach(function (dropdown) {
         new bootstrap.Dropdown(dropdown);
     });
 
-    // Imagine: deschide modal
-    var imageModal = document.getElementById('imageModal');
-    if (imageModal) {
-        imageModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            var imageUrl = button.getAttribute('data-bs-image');
-            var title = button.getAttribute('data-bs-title');
+    // Funcționalitate admin: toggle zi disponibilă/indisponibilă în calendar
+    const calendarEl = document.getElementById("calendar");
+    if (calendarEl && calendarEl.dataset.isStaff === "true") {
+        calendarEl.addEventListener("click", function (event) {
+            // Detectăm clic pe zi
+            const dateEl = event.target.closest(".fc-daygrid-day");
+            if (dateEl) {
+                const date = dateEl.getAttribute("data-date");
+                if (!date) return;
 
-            var modalImage = document.getElementById('modalImage');
-            var modalTitle = document.getElementById('imageModalLabel');
+                // Confirmare opțională
+                const confirmToggle = confirm(`Vrei să modifici disponibilitatea pentru ${date}?`);
+                if (!confirmToggle) return;
 
-            modalImage.src = imageUrl;
-            modalTitle.textContent = title;
+                // Trimitere request
+                fetch("/calendar/toggle/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    },
+                    body: JSON.stringify({ date: date }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "added" || data.status === "removed") {
+                        location.reload(); // Reîncărcăm calendarul
+                    } else {
+                        alert("Eroare: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Eroare la toggle disponibilitate:", error);
+                    alert("A apărut o eroare. Încearcă din nou.");
+                });
+            }
         });
     }
 
-    // Ștergere media
-    document.querySelectorAll('.delete-btn').forEach(function(button) {
-        button.addEventListener('click', function() {
-            var itemId = this.getAttribute('data-id');
-            if (!itemId || isNaN(itemId) || parseInt(itemId) <= 0) {
-                alert('ID-ul media nu este valid.');
-                return;
+    // Utilitar: obține CSRF din cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
-            var form = document.getElementById("confirmDeleteForm");
-            form.action = "/delete_media/" + itemId + "/";
-        });
-    });
+        }
+        return cookieValue;
+    }
 });
